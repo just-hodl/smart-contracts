@@ -1,5 +1,5 @@
-const HodlerToken = artifacts.require('HodlerToken.sol');
+const JustHodl = artifacts.require('JustHodl.sol');
 
 module.exports = async function(deployer) {
-  await deployer.deploy(HodlerToken, { gas: 7000000 });
+  await deployer.deploy(JustHodl, { gas: 7000000 });
 };
