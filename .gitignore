@@ -1,2 +1,7 @@
 node_modules
 .env
+*.csv
+contract/*Flat.sol
+contract/*Test.sol
+build/*Flat.json
+build/*Test.json

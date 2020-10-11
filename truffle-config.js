@@ -2,7 +2,6 @@ const path = require('path');
 const HDWalllet = require('@truffle/hdwallet-provider');
 const Web3 = require('web3');
 const web3 = new Web3();
-const accountIndex = 0;
 
 module.exports = {
   // See <http://truffleframework.com/docs/advanced/configuration>
@@ -16,7 +15,7 @@ module.exports = {
     },
     ropsten: {
       provider: function() {
-        return new HDWalllet(process.env.MNEMONIC, `https://ropsten.infura.io/v3/${process.env.INFURA_ID}`, accountIndex)
+        return new HDWalllet(process.env.MNEMONIC, `https://ropsten.infura.io/v3/${process.env.INFURA_ID}`, 0)
       },
       network_id: 3,
       gas: 5000000,
