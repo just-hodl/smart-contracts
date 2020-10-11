@@ -4,10 +4,10 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./JustHodlBase.sol";
 
 contract JustHodl is JustHodlBase {
-    address owner;
-    uint256 penaltyRatio = 1;
-    uint256 totalHodlers = 0;
-    uint256 maxSupply = 1000 * (10 ** 18);
+    address private owner;
+    uint256 private penaltyRatio = 1;
+    uint256 private totalHodlers = 0;
+    uint256 private maxSupply = 1000 * (10 ** 18);
 
     struct Hodler {
         address _address;
@@ -29,8 +29,16 @@ contract JustHodl is JustHodlBase {
         totalHodlers++;
     }
 
+    function getOwner() public view returns (address) {
+        return owner;
+    }
+
     function setOwner(address _address) public _onlyOwner {
         owner = _address;
+    }
+
+    function transferLocked(address _to, uint256 _value) public _onlyOwner returns (bool) {
+        return super.transfer(_to, _value);
     }
 
     function transfer(address _to, uint256 _value) public override returns (bool) {
