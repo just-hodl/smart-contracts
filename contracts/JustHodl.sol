@@ -19,7 +19,7 @@ contract JustHodl is JustHodlBase {
     mapping(address => Hodler) private penaltyExceptions;
 
     modifier _onlyOwner() {
-        require(msg.sender == owner);
+        require(msg.sender == owner, "JustHodl: only owner can perform this action");
         _;
     }
 
