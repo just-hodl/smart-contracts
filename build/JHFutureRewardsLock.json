@@ -33,7 +33,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [],
@@ -53,7 +54,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [],
@@ -66,7 +68,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     }
   ],
   "metadata": "{\"compiler\":{\"version\":\"0.6.6+commit.6c089d02\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"contract IERC20\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"beneficiary\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"releaseTime\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"beneficiary\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"release\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"releaseTime\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"token\",\"outputs\":[{\"internalType\":\"contract IERC20\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{\"release()\":{\"notice\":\"Transfers tokens held by timelock to beneficiary.\"}}}},\"settings\":{\"compilationTarget\":{\"/home/minato/projects/crypto/project-hodler/contracts/JHFutureRewardsLock.sol\":\"JHFutureRewardsLock\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/minato/projects/crypto/project-hodler/contracts/JHFutureRewardsLock.sol\":{\"keccak256\":\"0x44067ccf5e5212b25a0dd43c7050b53124524fb82ab7b02100c958078489d7c2\",\"urls\":[\"bzz-raw://041754fd90720ee34dc75ab13914a8235a1b0d0ccfcb102db66d9a8f1de0d79b\",\"dweb:/ipfs/QmRrTx6M26rsoTV6Aei8hNoiXBg3bnHKGTkNoWwCN4W1je\"]},\"@openzeppelin/contracts/math/SafeMath.sol\":{\"keccak256\":\"0x9a9cf02622cd7a64261b10534fc3260449da25c98c9e96d1b4ae8110a20e5806\",\"urls\":[\"bzz-raw://2df142592d1dc267d9549049ee3317fa190d2f87eaa565f86ab05ec83f7ab8f5\",\"dweb:/ipfs/QmSkJtcfWo7c42KnL5hho6GFxK6HRNV91XABx1P7xDtfLV\"]},\"@openzeppelin/contracts/token/ERC20/IERC20.sol\":{\"keccak256\":\"0x5c26b39d26f7ed489e555d955dcd3e01872972e71fdd1528e93ec164e4f23385\",\"urls\":[\"bzz-raw://efdc632af6960cf865dbc113665ea1f5b90eab75cc40ec062b2f6ae6da582017\",\"dweb:/ipfs/QmfAZFDuG62vxmAN9DnXApv7e7PMzPqi4RkqqZHLMSQiY5\"]},\"@openzeppelin/contracts/token/ERC20/SafeERC20.sol\":{\"keccak256\":\"0xf3b30f8a49631420635a8c35daacfcaa338012755f18a76fdd118730256f9a27\",\"urls\":[\"bzz-raw://0d7de652204c2ee291a61aa984103dfc7ae4392d651fbbc44a0079caee7c69a3\",\"dweb:/ipfs/Qmcw1cQnq9eWDnrCBwU3TNyqLfTMUFg5YKpYUkELoMPuUE\"]},\"@openzeppelin/contracts/token/ERC20/TokenTimelock.sol\":{\"keccak256\":\"0x5dd02bd6569c6eb7d7bf1c7c663232d29192b6b61495e53cfd67ebc598238e1c\",\"urls\":[\"bzz-raw://af8f01139c4109c2ceb532a78999ac6b40681a851e56d1475566c02c4f15805c\",\"dweb:/ipfs/QmVyuvXA26ArjfCZs9QVkvWZAjAuPJ91tsoyUWhLiNsqYG\"]},\"@openzeppelin/contracts/utils/Address.sol\":{\"keccak256\":\"0xf5fa8cbdffa5ef8be49b246b5628facc30b71707e78a45d80d93b64eff3fe390\",\"urls\":[\"bzz-raw://774e78a9ff32792cc95db4d2ceaf3a7965bb7f0bea5e6cb7cff182b450d44b37\",\"dweb:/ipfs/QmRRMC4uj7eAcLW7chynA3sNEYULMFazdLwQHKHQPyzAbA\"]}},\"version\":1}",
@@ -104,7 +107,7 @@
         "id": 2,
         "nodeType": "ImportDirective",
         "scope": 21,
-        "sourceUnit": 2237,
+        "sourceUnit": 2315,
         "src": "25:63:0",
         "symbolAliases": [],
         "unitAlias": ""
@@ -119,10 +122,10 @@
               "id": 3,
               "name": "TokenTimelock",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 2236,
+              "referencedDeclaration": 2314,
               "src": "122:13:0",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_TokenTimelock_$2236",
+                "typeIdentifier": "t_contract$_TokenTimelock_$2314",
                 "typeString": "contract TokenTimelock"
               }
             },
@@ -132,7 +135,7 @@
           }
         ],
         "contractDependencies": [
-          2236
+          2314
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -140,7 +143,7 @@
         "id": 20,
         "linearizedBaseContracts": [
           20,
-          2236
+          2314
         ],
         "name": "JHFutureRewardsLock",
         "nodeType": "ContractDefinition",
@@ -168,7 +171,7 @@
                     "referencedDeclaration": 6,
                     "src": "247:5:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_IERC20_$1915",
+                      "typeIdentifier": "t_contract$_IERC20_$1993",
                       "typeString": "contract IERC20"
                     }
                   },
@@ -206,10 +209,10 @@
                   "name": "TokenTimelock",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 2236,
+                  "referencedDeclaration": 2314,
                   "src": "233:13:0",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_type$_t_contract$_TokenTimelock_$2236_$",
+                    "typeIdentifier": "t_type$_t_contract$_TokenTimelock_$2314_$",
                     "typeString": "type(contract TokenTimelock)"
                   }
                 },
@@ -236,7 +239,7 @@
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_contract$_IERC20_$1915",
+                    "typeIdentifier": "t_contract$_IERC20_$1993",
                     "typeString": "contract IERC20"
                   },
                   "typeName": {
@@ -244,10 +247,10 @@
                     "id": 5,
                     "name": "IERC20",
                     "nodeType": "UserDefinedTypeName",
-                    "referencedDeclaration": 1915,
+                    "referencedDeclaration": 1993,
                     "src": "154:6:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_IERC20_$1915",
+                      "typeIdentifier": "t_contract$_IERC20_$1993",
                       "typeString": "contract IERC20"
                     }
                   },
@@ -360,7 +363,7 @@
         "id": 2,
         "nodeType": "ImportDirective",
         "scope": 21,
-        "sourceUnit": 2237,
+        "sourceUnit": 2315,
         "src": "25:63:0",
         "symbolAliases": [],
         "unitAlias": ""
@@ -375,10 +378,10 @@
               "id": 3,
               "name": "TokenTimelock",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 2236,
+              "referencedDeclaration": 2314,
               "src": "122:13:0",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_TokenTimelock_$2236",
+                "typeIdentifier": "t_contract$_TokenTimelock_$2314",
                 "typeString": "contract TokenTimelock"
               }
             },
@@ -388,7 +391,7 @@
           }
         ],
         "contractDependencies": [
-          2236
+          2314
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -396,7 +399,7 @@
         "id": 20,
         "linearizedBaseContracts": [
           20,
-          2236
+          2314
         ],
         "name": "JHFutureRewardsLock",
         "nodeType": "ContractDefinition",
@@ -424,7 +427,7 @@
                     "referencedDeclaration": 6,
                     "src": "247:5:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_IERC20_$1915",
+                      "typeIdentifier": "t_contract$_IERC20_$1993",
                       "typeString": "contract IERC20"
                     }
                   },
@@ -462,10 +465,10 @@
                   "name": "TokenTimelock",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 2236,
+                  "referencedDeclaration": 2314,
                   "src": "233:13:0",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_type$_t_contract$_TokenTimelock_$2236_$",
+                    "typeIdentifier": "t_type$_t_contract$_TokenTimelock_$2314_$",
                     "typeString": "type(contract TokenTimelock)"
                   }
                 },
@@ -492,7 +495,7 @@
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_contract$_IERC20_$1915",
+                    "typeIdentifier": "t_contract$_IERC20_$1993",
                     "typeString": "contract IERC20"
                   },
                   "typeName": {
@@ -500,10 +503,10 @@
                     "id": 5,
                     "name": "IERC20",
                     "nodeType": "UserDefinedTypeName",
-                    "referencedDeclaration": 1915,
+                    "referencedDeclaration": 1993,
                     "src": "154:6:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_IERC20_$1915",
+                      "typeIdentifier": "t_contract$_IERC20_$1993",
                       "typeString": "contract IERC20"
                     }
                   },
@@ -593,9 +596,17 @@
     "name": "solc",
     "version": "0.6.6+commit.6c089d02.Emscripten.clang"
   },
-  "networks": {},
+  "networks": {
+    "3": {
+      "events": {},
+      "links": {},
+      "address": "0xd812f24680fBC638BE1D819189f42CE0330D24D6",
+      "transactionHash": "0x2351b0d2b8e78af88dea295fb019f8823fed17080a6f116fbf28d6299933ac40"
+    }
+  },
   "schemaVersion": "3.2.5",
-  "updatedAt": "2020-10-11T12:40:43.487Z",
+  "updatedAt": "2020-10-11T13:12:10.704Z",
+  "networkType": "ethereum",
   "devdoc": {
     "methods": {}
   },
