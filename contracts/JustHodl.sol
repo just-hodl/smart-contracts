@@ -3,6 +3,21 @@ pragma solidity ^0.6.0;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./JustHodlBase.sol";
 
+/*   __    __
+    /  |  /  |
+    $$ |  $$ |
+    $$ |__$$ |
+    $$    $$ |     Just Hodl
+    $$$$$$$$ |     $jHODL
+    $$ |  $$ |
+    $$ |  $$ |
+    $$ /  $$ /
+
+    The Token For The Hodlers.
+
+    More informations at https://justhodl.finance
+*/
+
 contract JustHodl is JustHodlBase {
     address private owner;
     uint256 private penaltyRatio = 1;
@@ -14,9 +29,9 @@ contract JustHodl is JustHodlBase {
         bool exists;
     }
 
-    mapping(uint256 => address) private hodlers;
-    mapping(address => Hodler) private addressToHodler;
-    mapping(address => Hodler) private penaltyExceptions;
+    mapping (uint256 => address) private hodlers;
+    mapping (address => Hodler) private addressToHodler;
+    mapping (address => Hodler) private penaltyExceptions;
 
     modifier _onlyOwner() {
         require(msg.sender == owner, "JustHodl: only owner can perform this action");
