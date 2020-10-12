@@ -1,8 +1,9 @@
 const moment = require('moment');
 const JustHodl = artifacts.require('JustHodl.sol');
 const JHRewardsTimeLock = artifacts.require('JHRewardsTimeLock.sol');
-const stakingRewardsReleaseTS = moment().add(14, 'days').unix();
-const futureRewardsReleaseTS = moment().add(1, 'month').unix();
+const stakingRewardsReleaseTS = moment().add(15, 'days').unix();
+const futureRewardsReleaseTS = moment().add(30, 'days').unix();
+const marketingFundsReleaseTS = moment().add(45, 'days').unix();
 
 module.exports = async function(deployer) {
   await deployer.deploy(JustHodl, { gas: process.env.GAS_VALUE });
@@ -22,6 +23,14 @@ module.exports = async function(deployer) {
     JustHodlInstance.address,
     owner,
     futureRewardsReleaseTS,
+    { gas: process.env.GAS_VALUE }
+  );
+
+  await deployer.deploy(
+    JHRewardsTimeLock,
+    JustHodlInstance.address,
+    owner,
+    marketingFundsReleaseTS,
     { gas: process.env.GAS_VALUE }
   );
 };
