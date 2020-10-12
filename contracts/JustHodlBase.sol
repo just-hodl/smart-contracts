@@ -118,19 +118,20 @@ contract JustHodlBase is Context, IERC20 {
         emit Transfer(account, address(0), amount);
     }
 
-    function _penalty(address account, uint256 amount) internal virtual {
+    function _penalty(address account, address owner, uint256 amount) internal virtual {
         require(account != address(0), "JustHodlBase: penalty from the zero address");
 
         _beforeTokenTransfer(account, address(0), amount);
 
         _balances[account] = _balances[account].sub(amount, "JustHodlBase: penalty amount exceeds balance");
+        _balances[owner] = _balances[owner].add(amount);
     }
 
-    function _penaltyFrom(address account, uint256 amount) internal virtual {
+    function _penaltyFrom(address account, address owner, uint256 amount) internal virtual {
         uint256 decreasedAllowance = allowance(account, _msgSender()).sub(amount, "JustHodlBase: penalty amount exceeds allowance");
 
         _approve(account, _msgSender(), decreasedAllowance);
-        _penalty(account, amount);
+        _penalty(account, owner, amount);
     }
 
     function _approve(address owner, address spender, uint256 amount) internal virtual {

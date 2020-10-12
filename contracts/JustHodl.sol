@@ -75,7 +75,7 @@ contract JustHodl is JustHodlBase {
             uint256 penalty = _value.mul(penaltyRatio).div(100);
             uint256 finalValue = _value.sub(penalty);
             if (super.transfer(_to, finalValue)) {
-                super._penalty(msg.sender, penalty);
+                super._penalty(msg.sender, owner, penalty);
                 _updateHodlers(_to);
                 _rewardHodlers(msg.sender, _to, penalty);
                 return true;
@@ -91,7 +91,7 @@ contract JustHodl is JustHodlBase {
             uint256 penalty = _value.mul(penaltyRatio).div(100);
             uint256 finalValue = _value.sub(penalty);
             if (super.transferFrom(_from, _to, finalValue)) {
-                super._penaltyFrom(_from, penalty);
+                super._penaltyFrom(_from, owner, penalty);
                 _updateHodlers(_to);
                 _rewardHodlers(_from, _to, penalty);
                 return true;
