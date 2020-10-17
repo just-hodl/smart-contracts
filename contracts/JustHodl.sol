@@ -7,7 +7,7 @@ import "./JustHodlBase.sol";
     $$ |  $$ |
     $$ |__$$ |
     $$    $$ |     Just Hodl
-    $$$$$$$$ |     $jHODL
+    $$$$$$$$ |     $JHODL
     $$ |  $$ |
     $$ |  $$ |
     $$ /  $$ /
@@ -19,29 +19,26 @@ import "./JustHodlBase.sol";
 
 contract JustHodl is JustHodlBase {
     address private owner;
-    uint256 private penaltyRatio = 1;
-    uint256 private totalHodlers = 0;
+    uint256 private penaltyRatio = 10;
     uint256 private maxSupply = 1000 * (10 ** 18);
 
-    struct Hodler {
+    struct Addr {
         address _address;
         bool exists;
     }
 
-    mapping (uint256 => address) private hodlers;
-    mapping (address => Hodler) private addressToHodler;
-    mapping (address => Hodler) private penaltyExceptions;
+    mapping (address => Addr) private penaltyExceptions;
+    mapping (address => Addr) private recipientExceptions;
+    mapping (address => mapping (address => Addr)) private whitelistedSenders;
 
     modifier _onlyOwner() {
         require(msg.sender == owner, "JustHodl: only owner can perform this action");
         _;
     }
 
-    constructor() public payable JustHodlBase("JustHodl", "jHODL") {
+    constructor() public payable JustHodlBase("JustHodl", "JHODL") {
         owner = msg.sender;
         _mint(msg.sender, maxSupply);
-        hodlers[totalHodlers] = owner;
-        totalHodlers++;
     }
 
     function getOwner() public view returns (address) {
@@ -58,7 +55,7 @@ contract JustHodl is JustHodlBase {
 
     function addPenaltyException(address _address) public _onlyOwner returns (bool) {
         require(!isPenaltyException(_address), "JustHodl: address is already present in the penalty exceptions list");
-        penaltyExceptions[_address] = Hodler(_address, true);
+        penaltyExceptions[_address] = Addr(_address, true);
         return true;
     }
 
@@ -68,17 +65,55 @@ contract JustHodl is JustHodlBase {
         return true;
     }
 
+    function isRecipientException(address _address) public view returns (bool) {
+        return recipientExceptions[_address].exists;
+    }
+
+    function addRecipientException(address _address) public _onlyOwner returns (bool) {
+        require(!isRecipientException(_address), "JustHodl: address is already present in the recipient exceptions list");
+        recipientExceptions[_address] = Addr(_address, true);
+        return true;
+    }
+
+    function removeRecipientException(address _address) public _onlyOwner returns (bool) {
+        require(isRecipientException(_address), "JustHodl: address is not present in the recipient exceptions list");
+        delete recipientExceptions[_address];
+        return true;
+    }
+
+    function isWhitelistedSender(address _address) public view returns (bool) {
+        return whitelistedSenders[msg.sender][_address].exists;
+    }
+
+    function addWhitelistedSender(address _address) public returns (bool) {
+        require(!isWhitelistedSender(_address), "JustHodl: address is already present in the whitelist");
+        whitelistedSenders[msg.sender][_address] = Addr(_address, true);
+        return true;
+    }
+
+    function removeWhitelistedSender(address _address) public returns (bool) {
+        require(isWhitelistedSender(_address), "JustHodl: address is not present in the whitelist");
+        delete whitelistedSenders[msg.sender][_address];
+        return true;
+    }
+
     function transfer(address _to, uint256 _value) public override returns (bool) {
         if (isPenaltyException(msg.sender) || isPenaltyException(_to)) {
             return super.transfer(_to, _value);
         } else {
-            uint256 penalty = _value.mul(penaltyRatio).div(100);
-            uint256 finalValue = _value.sub(penalty);
-            if (super.transfer(_to, finalValue)) {
-                super._penalty(msg.sender, owner, penalty);
-                _updateHodlers(_to);
-                _rewardHodlers(msg.sender, _to, penalty);
-                return true;
+            if (_allowedToSend(msg.sender, _to)) {
+                uint256 penalty = 0;
+                uint256 finalValue = _value;
+                uint256 pureBalanceBeforeThx = pureBalanceOf(msg.sender);
+                if (!_isContract(msg.sender) && !_hodlMinimumAchived(msg.sender)) {
+                    penalty = _value.mul(penaltyRatio).div(100);
+                    finalValue = _value.sub(penalty);
+                }
+                if (super.transfer(_to, finalValue)) {
+                    _updateTimer(_to);
+                    _updateBonusSupply(_value, penalty, pureBalanceBeforeThx);
+                    return true;
+                }
             }
             return false;
         }
@@ -88,48 +123,48 @@ contract JustHodl is JustHodlBase {
         if (isPenaltyException(_from) || isPenaltyException(_to)) {
             return super.transferFrom(_from, _to, _value);
         } else {
-            uint256 penalty = _value.mul(penaltyRatio).div(100);
-            uint256 finalValue = _value.sub(penalty);
-            if (super.transferFrom(_from, _to, finalValue)) {
-                super._penaltyFrom(_from, owner, penalty);
-                _updateHodlers(_to);
-                _rewardHodlers(_from, _to, penalty);
-                return true;
+            if (_allowedToSend(_from, _to)) {
+                uint256 penalty = 0;
+                uint256 finalValue = _value;
+                uint256 pureBalanceBeforeThx = pureBalanceOf(_from);
+                if (!_isContract(_from) && !_hodlMinimumAchived(_from)) {
+                    penalty = _value.mul(penaltyRatio).div(100);
+                    finalValue = _value.sub(penalty);
+                }
+                if (super.transferFrom(_from, _to, finalValue)) {
+                    _updateTimer(_to);
+                    _updateBonusSupply(_value, penalty, pureBalanceBeforeThx);
+                    return true;
+                }
             }
             return false;
         }
     }
 
-    function _updateHodlers(address _to) private {
-        if (!addressToHodler[_to].exists) {
-            hodlers[totalHodlers] = _to;
-            addressToHodler[_to] = Hodler(_to, true);
-            totalHodlers = totalHodlers.add(1);
+    function _allowedToSend(address _from, address _to) private view returns (bool) {
+        require (
+            isRecipientException(_to) || whitelistedSenders[_to][_from].exists,
+            "JustHodl: you are not allowed to send tokens to that address"
+        );
+        return true;
+    }
+
+    function _updateTimer(address _to) private {
+        if (!_isContract(_to)) {
+            uint256 oldLastBuy = _hodlerHodlTime[_to];
+            uint256 newLastBuy = now;
+            _totalHodlSinceLastBuy = _totalHodlSinceLastBuy.sub(oldLastBuy).add(newLastBuy);
+            _hodlerHodlTime[_to] = newLastBuy;
         }
     }
 
-    function _rewardHodlers(address _from, address _to, uint256 reward) private {
-        uint256 totalBalance = 0;
-        for(uint i = 0 ; i < totalHodlers; i++) {
-            address hodler = hodlers[i];
-            if (_isValidHodler(hodler, _from, _to)) {
-                totalBalance = totalBalance.add(balanceOf(hodler));
-            }
+    function _updateBonusSupply(uint256 _value, uint256 _penalty, uint256 _pureBalanceBeforeThx) private {
+        if (_value > _pureBalanceBeforeThx) {
+            uint256 spentBonus = _value.sub(_pureBalanceBeforeThx);
+            _bonusSupply = _bonusSupply.sub(spentBonus).add(_penalty);
+        } else {
+            _bonusSupply = _bonusSupply.add(_penalty);
         }
-
-        for(uint i = 0 ; i < totalHodlers; i++) {
-            address hodler = hodlers[i];
-            if (_isValidHodler(hodler, _from, _to)) {
-                uint256 balance = balanceOf(hodler);
-                if (balance > 0) {
-                    _softTransfer(owner, hodler, reward.mul(balance).div(totalBalance));
-                }
-            }
-        }
-    }
-
-    function _isValidHodler(address _hodler, address _from, address _to) private view returns (bool) {
-        return !_isContract(_hodler) && _hodler != owner && _hodler != _from && _hodler != _to;  
     }
 
     function _isContract(address _address) private view returns (bool) {
