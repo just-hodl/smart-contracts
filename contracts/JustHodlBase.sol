@@ -11,9 +11,9 @@ contract JustHodlBase is Context, IERC20 {
     using SafeMath for uint256;
     using Address for address;
 
-    uint256 constant internal _hodlMinimum = 7 days;
     uint256 internal _totalHodlSinceLastBuy = 0;
     uint256 internal _bonusSupply = 0;
+    uint256 internal _holdersSupply = 0;
 
     mapping (address => uint256) internal _hodlerHodlTime;
 
@@ -53,9 +53,17 @@ contract JustHodlBase is Context, IERC20 {
         return _bonusSupply;
     }
 
+    function holdersSupply() public view returns (uint256) {
+        return _holdersSupply;
+    }
+
+    function totalHodlSinceLastBuy() public view returns (uint256) {
+        return _totalHodlSinceLastBuy;
+    }
+
     function balanceOf(address account) public view override returns (uint256) {
         uint256 balance = _balances[account];
-        if (_hodlMinimumAchived(account)) {
+        if (balance > 0 && hodlMinimumAchived(account)) {
             return balance + _getHodlBonus(account, balance);
         } else {
             return balance;
@@ -72,6 +80,11 @@ contract JustHodlBase is Context, IERC20 {
 
     function hodlTimeOf(address _address) public view returns (uint256) {
         return _hodlerHodlTime[_address];
+    }
+
+    function hodlMinimumAchived(address _address) public view returns (bool) {
+        uint256 hodlTime = _hodlerHodlTime[_address];
+        return hodlTime > 0 && (now - 7 days) > hodlTime;
     }
 
     function transfer(address recipient, uint256 amount) public virtual override returns (bool) {
@@ -136,18 +149,7 @@ contract JustHodlBase is Context, IERC20 {
     }
 
     function _getHodlBonus(address _address, uint256 _balance) internal view returns (uint256) {
-        uint256 hodlDiffSinceLastBuy = _getHoldDiff(_address);
-        uint256 bonusForAmount = _balance.div(_totalSupply).div(2);
-        uint256 bonusForHodlTime = hodlDiffSinceLastBuy.div(_totalHodlSinceLastBuy).mul(2);
-        return bonusForAmount.mul(bonusForHodlTime).mul(_bonusSupply);
-    }
-    
-    function _getHoldDiff(address _address) internal view returns (uint256) {
-        return now - _hodlMinimum - _hodlerHodlTime[_address];
-    }
-
-    function _hodlMinimumAchived(address _address) internal view returns (bool) {
-        return (now - _hodlMinimum) > _hodlerHodlTime[_address];
+        return _bonusSupply.mul(_balance).div(_holdersSupply.mul(2)).mul(_hodlerHodlTime[_address]).div(_totalHodlSinceLastBuy.div(2));
     }
 
     function _approve(address owner, address spender, uint256 amount) internal virtual {
