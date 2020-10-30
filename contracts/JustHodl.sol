@@ -37,7 +37,7 @@ contract JustHodl is JustHodlBase {
         _;
     }
 
-    constructor() public payable JustHodlBase("JustHodl", "JHO2") {
+    constructor() public payable JustHodlBase("JustHodl", "JHO") {
         owner = msg.sender;
         _mint(msg.sender, maxSupply);
     }
