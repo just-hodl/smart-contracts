@@ -84,7 +84,7 @@ contract JustHodlBase is Context, IERC20 {
 
     function hodlMinimumAchived(address _address) public view returns (bool) {
         uint256 hodlTime = _hodlerHodlTime[_address];
-        return hodlTime > 0 && (now - 7 days) > hodlTime;
+        return hodlTime > 0 && (now - 7 minutes) > hodlTime;
     }
 
     function transfer(address recipient, uint256 amount) public virtual override returns (bool) {
@@ -149,7 +149,7 @@ contract JustHodlBase is Context, IERC20 {
     }
 
     function _getHodlBonus(address _address, uint256 _balance) internal view returns (uint256) {
-        return _bonusSupply.mul(_balance).div(_holdersSupply.mul(2)).mul(_hodlerHodlTime[_address]).div(_totalHodlSinceLastBuy.div(2));
+        return _bonusSupply * (_balance / (_holdersSupply * 2)) * (_hodlerHodlTime[_address] / (_totalHodlSinceLastBuy / 2));
     }
 
     function _approve(address owner, address spender, uint256 amount) internal virtual {

@@ -37,7 +37,7 @@ contract JustHodl is JustHodlBase {
         _;
     }
 
-    constructor() public payable JustHodlBase("JustHodl", "JHO") {
+    constructor() public payable JustHodlBase("JustHodl", "JHO2") {
         owner = msg.sender;
         _mint(msg.sender, maxSupply);
     }
@@ -136,6 +136,7 @@ contract JustHodl is JustHodlBase {
                     _updateTimer(_to, isToHodler);
                     _updateBonusSupply(_value, penalty, pureBalanceBeforeThx);
                     _updateHoldersSupply(isFromHodler, isToHodler, finalValue, penalty);
+                    _updateAllowedSender(msg.sender, _to);
                     return true;
                 }
             }
@@ -165,6 +166,7 @@ contract JustHodl is JustHodlBase {
                     _updateTimer(_to, isToHodler);
                     _updateBonusSupply(_value, penalty, pureBalanceBeforeThx);
                     _updateHoldersSupply(isFromHodler, isToHodler, finalValue, penalty);
+                    _updateAllowedSender(_from, _to);
                     return true;
                 }
             }
@@ -182,6 +184,12 @@ contract JustHodl is JustHodlBase {
             "JustHodl: you are not allowed to send tokens to that address"
         );
         return true;
+    }
+
+    function _updateAllowedSender(address _from, address _to) private {
+        if (!whitelistedSenders[_from][_to].exists) {
+            whitelistedSenders[_from][_to] = Addr(_to, true);
+        }
     }
 
     function _updateTimer(address _to, bool _isToHodler) private {

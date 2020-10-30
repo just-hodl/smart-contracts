@@ -4,14 +4,11 @@ const Web3 = require('web3');
 const web3 = new Web3();
 
 module.exports = {
-  // See <http://truffleframework.com/docs/advanced/configuration>
-  // to customize your Truffle configuration!
   contracts_build_directory: path.join(__dirname, './build'),
   networks: {
     develop: {
-      host: 'localhost',
-      port: 7545,
-      network_id: '5777'
+      host: 'https://sandbox.truffleteams.com/ea8073ff-0fa0-414d-97a7-0121fc391337',
+      network_id: 1604083090995
     },
     ropsten: {
       provider: function() {
