@@ -11,6 +11,12 @@ contract JustHodlBase is Context, IERC20 {
     using SafeMath for uint256;
     using Address for address;
 
+    uint256 internal _totalHodlSinceLastBuy = 0;
+    uint256 internal _bonusSupply = 0;
+    uint256 internal _holdersSupply = 0;
+
+    mapping (address => uint256) internal _hodlerHodlTime;
+
     mapping (address => uint256) private _balances;
 
     mapping (address => mapping (address => uint256)) private _allowances;
@@ -43,8 +49,42 @@ contract JustHodlBase is Context, IERC20 {
         return _totalSupply;
     }
 
+    function bonusSupply() public view returns (uint256) {
+        return _bonusSupply;
+    }
+
+    function holdersSupply() public view returns (uint256) {
+        return _holdersSupply;
+    }
+
+    function totalHodlSinceLastBuy() public view returns (uint256) {
+        return _totalHodlSinceLastBuy;
+    }
+
     function balanceOf(address account) public view override returns (uint256) {
-        return _balances[account];
+        uint256 balance = _balances[account];
+        if (balance > 0 && hodlMinimumAchived(account)) {
+            return balance + _getHodlBonus(account, balance);
+        } else {
+            return balance;
+        }
+    }
+
+    function pureBalanceOf(address _address) public view returns (uint256) {
+        return _balances[_address];
+    }
+
+    function pureBonusOf(address _address) public view returns (uint256) {
+        return balanceOf(_address).sub(_balances[_address]);
+    }
+
+    function hodlTimeOf(address _address) public view returns (uint256) {
+        return _hodlerHodlTime[_address];
+    }
+
+    function hodlMinimumAchived(address _address) public view returns (bool) {
+        uint256 hodlTime = _hodlerHodlTime[_address];
+        return hodlTime > 0 && (now - 7 minutes) > hodlTime;
     }
 
     function transfer(address recipient, uint256 amount) public virtual override returns (bool) {
@@ -88,16 +128,6 @@ contract JustHodlBase is Context, IERC20 {
         emit Transfer(sender, recipient, amount);
     }
 
-    function _softTransfer(address sender, address recipient, uint256 amount) internal virtual {
-        require(sender != address(0), "JustHodlBase: transfer from the zero address");
-        require(recipient != address(0), "JustHodlBase: transfer to the zero address");
-
-        _beforeTokenTransfer(sender, recipient, amount);
-
-        _balances[sender] = _balances[sender].sub(amount, "JustHodlBase: transfer amount exceeds balance");
-        _balances[recipient] = _balances[recipient].add(amount);
-    }
-
     function _mint(address account, uint256 amount) internal virtual {
         require(account != address(0), "JustHodlBase: mint to the zero address");
 
@@ -118,20 +148,8 @@ contract JustHodlBase is Context, IERC20 {
         emit Transfer(account, address(0), amount);
     }
 
-    function _penalty(address account, address owner, uint256 amount) internal virtual {
-        require(account != address(0), "JustHodlBase: penalty from the zero address");
-
-        _beforeTokenTransfer(account, address(0), amount);
-
-        _balances[account] = _balances[account].sub(amount, "JustHodlBase: penalty amount exceeds balance");
-        _balances[owner] = _balances[owner].add(amount);
-    }
-
-    function _penaltyFrom(address account, address owner, uint256 amount) internal virtual {
-        uint256 decreasedAllowance = allowance(account, _msgSender()).sub(amount, "JustHodlBase: penalty amount exceeds allowance");
-
-        _approve(account, _msgSender(), decreasedAllowance);
-        _penalty(account, owner, amount);
+    function _getHodlBonus(address _address, uint256 _balance) internal view returns (uint256) {
+        return _bonusSupply * (_balance / (_holdersSupply * 2)) * (_hodlerHodlTime[_address] / (_totalHodlSinceLastBuy / 2));
     }
 
     function _approve(address owner, address spender, uint256 amount) internal virtual {
