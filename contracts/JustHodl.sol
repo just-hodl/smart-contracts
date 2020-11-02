@@ -27,7 +27,6 @@ contract JustHodl is JustHodlBase {
         bool exists;
     }
 
-    mapping (address => Addr) private penaltyExceptions;
     mapping (address => Addr) private senderExceptions;
     mapping (address => Addr) private recipientExceptions;
     mapping (address => mapping (address => Addr)) private whitelistedSenders;
@@ -48,22 +47,6 @@ contract JustHodl is JustHodlBase {
 
     function setOwner(address _address) public _onlyOwner {
         owner = _address;
-    }
-
-    function isPenaltyException(address _address) public view returns (bool) {
-        return penaltyExceptions[_address].exists;
-    }
-
-    function addPenaltyException(address _address) public _onlyOwner returns (bool) {
-        require(!isPenaltyException(_address), "JustHodl: address is already present in the penalty exceptions list");
-        penaltyExceptions[_address] = Addr(_address, true);
-        return true;
-    }
-
-    function removePenaltyException(address _address) public _onlyOwner returns (bool) {
-        require(isPenaltyException(_address), "JustHodl: address is not present in the penalty exceptions list");
-        delete penaltyExceptions[_address];
-        return true;
     }
 
     function isSenderException(address _address) public view returns (bool) {
@@ -117,67 +100,51 @@ contract JustHodl is JustHodlBase {
     function transfer(address _to, uint256 _value) public override returns (bool) {
         bool isFromHodler = _isValidHodler(msg.sender);
         bool isToHodler = _isValidHodler(_to);
-        if (isPenaltyException(msg.sender) || isPenaltyException(_to)) {
-            if (super.transfer(_to, _value)) {
-                _updateHoldersSupply(isFromHodler, isToHodler, _value, 0);
+        if (_allowedToSend(msg.sender, _to)) {
+            uint256 penalty = 0;
+            uint256 finalValue = _value;
+            uint256 pureBalanceBeforeThx = pureBalanceOf(msg.sender);
+            if (isFromHodler && !hodlMinimumAchived(msg.sender)) {
+                penalty = _value.mul(penaltyRatio).div(100);
+                finalValue = _value.sub(penalty);
+            }
+            if (super.transfer(_to, finalValue)) {
+                if (penalty > 0) {
+                    _balances[msg.sender] = _balances[msg.sender].sub(penalty);
+                }
+                _updateTimer(msg.sender, _to, isFromHodler, isToHodler);
+                _updateBonusSupply(_value, penalty, pureBalanceBeforeThx);
+                _updateHoldersSupply(isFromHodler, isToHodler, finalValue, penalty);
+                _updateAllowedSender(msg.sender, _to);
                 return true;
             }
-            return false;
-        } else {
-            if (_allowedToSend(msg.sender, _to)) {
-                uint256 penalty = 0;
-                uint256 finalValue = _value;
-                uint256 pureBalanceBeforeThx = pureBalanceOf(msg.sender);
-                if (isFromHodler && !hodlMinimumAchived(msg.sender)) {
-                    penalty = _value.mul(penaltyRatio).div(100);
-                    finalValue = _value.sub(penalty);
-                }
-                if (super.transfer(_to, finalValue)) {
-                    if (penalty > 0) {
-                        _balances[msg.sender] = _balances[msg.sender].sub(penalty);
-                    }
-                    _updateTimer(msg.sender, _to, isFromHodler, isToHodler);
-                    _updateBonusSupply(_value, penalty, pureBalanceBeforeThx);
-                    _updateHoldersSupply(isFromHodler, isToHodler, finalValue, penalty);
-                    _updateAllowedSender(msg.sender, _to);
-                    return true;
-                }
-            }
-            return false;
         }
+        return false;
     }
 
     function transferFrom(address _from, address _to, uint256 _value) public override returns (bool) {
         bool isFromHodler = _isValidHodler(_from);
         bool isToHodler = _isValidHodler(_to);
-        if (isPenaltyException(_from) || isPenaltyException(_to)) {
-            if (super.transferFrom(_from, _to, _value)) {
-                _updateHoldersSupply(isFromHodler, isToHodler, _value, 0);
+        if (_allowedToSend(_from, _to)) {
+            uint256 penalty = 0;
+            uint256 finalValue = _value;
+            uint256 pureBalanceBeforeThx = pureBalanceOf(_from);
+            if (isFromHodler && !hodlMinimumAchived(_from)) {
+                penalty = _value.mul(penaltyRatio).div(100);
+                finalValue = _value.sub(penalty);
+            }
+            if (super.transferFrom(_from, _to, finalValue)) {
+                if (penalty > 0) {
+                    _balances[_from] = _balances[_from].sub(penalty);
+                }
+                _updateTimer(_from, _to, isFromHodler, isToHodler);
+                _updateBonusSupply(_value, penalty, pureBalanceBeforeThx);
+                _updateHoldersSupply(isFromHodler, isToHodler, finalValue, penalty);
+                _updateAllowedSender(_from, _to);
                 return true;
             }
-           return false;
-        } else {
-            if (_allowedToSend(_from, _to)) {
-                uint256 penalty = 0;
-                uint256 finalValue = _value;
-                uint256 pureBalanceBeforeThx = pureBalanceOf(_from);
-                if (isFromHodler && !hodlMinimumAchived(_from)) {
-                    penalty = _value.mul(penaltyRatio).div(100);
-                    finalValue = _value.sub(penalty);
-                }
-                if (super.transferFrom(_from, _to, finalValue)) {
-                    if (penalty > 0) {
-                        _balances[_from] = _balances[_from].sub(penalty);
-                    }
-                    _updateTimer(_from, _to, isFromHodler, isToHodler);
-                    _updateBonusSupply(_value, penalty, pureBalanceBeforeThx);
-                    _updateHoldersSupply(isFromHodler, isToHodler, finalValue, penalty);
-                    _updateAllowedSender(_from, _to);
-                    return true;
-                }
-            }
-            return false;
         }
+        return false;
     }
 
     function _allowedToSend(address _from, address _to) private view returns (bool) {

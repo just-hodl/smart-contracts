@@ -123,7 +123,14 @@ contract JustHodlBase is Context, IERC20 {
 
         _beforeTokenTransfer(sender, recipient, amount);
 
-        _balances[sender] = _balances[sender].sub(amount, "JustHodlBase: transfer amount exceeds balance");
+        uint256 finalSenderAmount = amount;
+        uint256 pureBalance = _balances[sender];
+        uint256 totalBalance = balanceOf(sender);
+        if (amount > pureBalance && amount <= totalBalance) {
+            finalSenderAmount = pureBalance;
+        }
+
+        _balances[sender] = _balances[sender].sub(finalSenderAmount, "JustHodlBase: transfer amount exceeds balance");
         _balances[recipient] = _balances[recipient].add(amount);
         emit Transfer(sender, recipient, amount);
     }
@@ -136,16 +143,6 @@ contract JustHodlBase is Context, IERC20 {
         _totalSupply = _totalSupply.add(amount);
         _balances[account] = _balances[account].add(amount);
         emit Transfer(address(0), account, amount);
-    }
-
-    function _burn(address account, uint256 amount) internal virtual {
-        require(account != address(0), "JustHodlBase: burn from the zero address");
-
-        _beforeTokenTransfer(account, address(0), amount);
-
-        _balances[account] = _balances[account].sub(amount, "JustHodlBase: burn amount exceeds balance");
-        _totalSupply = _totalSupply.sub(amount);
-        emit Transfer(account, address(0), amount);
     }
 
     function _getHodlBonus(address _address, uint256 _balance) internal view returns (uint256) {
