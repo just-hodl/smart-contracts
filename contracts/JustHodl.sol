@@ -136,7 +136,7 @@ contract JustHodl is JustHodlBase {
                     if (penalty > 0) {
                         _balances[msg.sender] = _balances[msg.sender].sub(penalty);
                     }
-                    _updateTimer(_to, isToHodler);
+                    _updateTimer(msg.sender, _to, isFromHodler, isToHodler);
                     _updateBonusSupply(_value, penalty, pureBalanceBeforeThx);
                     _updateHoldersSupply(isFromHodler, isToHodler, finalValue, penalty);
                     _updateAllowedSender(msg.sender, _to);
@@ -169,7 +169,7 @@ contract JustHodl is JustHodlBase {
                     if (penalty > 0) {
                         _balances[_from] = _balances[_from].sub(penalty);
                     }
-                    _updateTimer(_to, isToHodler);
+                    _updateTimer(_from, _to, isFromHodler, isToHodler);
                     _updateBonusSupply(_value, penalty, pureBalanceBeforeThx);
                     _updateHoldersSupply(isFromHodler, isToHodler, finalValue, penalty);
                     _updateAllowedSender(_from, _to);
@@ -198,7 +198,11 @@ contract JustHodl is JustHodlBase {
         }
     }
 
-    function _updateTimer(address _to, bool _isToHodler) private {
+    function _updateTimer(address _from, address _to, bool _isFromHodler, bool _isToHodler) private {
+        if (_isFromHodler && _balances[_from] == 0) {
+            _totalHodlSinceLastBuy = _totalHodlSinceLastBuy.sub(_hodlerHodlTime[_from]);
+            _hodlerHodlTime[_from] = 0;
+        }
         if (_isToHodler) {
             uint256 oldLastBuy = _hodlerHodlTime[_to];
             uint256 newLastBuy = now;
