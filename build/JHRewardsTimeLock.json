@@ -104,7 +104,7 @@
         "id": 2,
         "nodeType": "ImportDirective",
         "scope": 21,
-        "sourceUnit": 2169,
+        "sourceUnit": 2203,
         "src": "25:63:0",
         "symbolAliases": [],
         "unitAlias": ""
@@ -119,10 +119,10 @@
               "id": 3,
               "name": "TokenTimelock",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 2168,
+              "referencedDeclaration": 2202,
               "src": "120:13:0",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_TokenTimelock_$2168",
+                "typeIdentifier": "t_contract$_TokenTimelock_$2202",
                 "typeString": "contract TokenTimelock"
               }
             },
@@ -132,7 +132,7 @@
           }
         ],
         "contractDependencies": [
-          2168
+          2202
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -140,7 +140,7 @@
         "id": 20,
         "linearizedBaseContracts": [
           20,
-          2168
+          2202
         ],
         "name": "JHRewardsTimeLock",
         "nodeType": "ContractDefinition",
@@ -168,7 +168,7 @@
                     "referencedDeclaration": 6,
                     "src": "245:5:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_IERC20_$1847",
+                      "typeIdentifier": "t_contract$_IERC20_$1881",
                       "typeString": "contract IERC20"
                     }
                   },
@@ -206,10 +206,10 @@
                   "name": "TokenTimelock",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 2168,
+                  "referencedDeclaration": 2202,
                   "src": "231:13:0",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_type$_t_contract$_TokenTimelock_$2168_$",
+                    "typeIdentifier": "t_type$_t_contract$_TokenTimelock_$2202_$",
                     "typeString": "type(contract TokenTimelock)"
                   }
                 },
@@ -236,7 +236,7 @@
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_contract$_IERC20_$1847",
+                    "typeIdentifier": "t_contract$_IERC20_$1881",
                     "typeString": "contract IERC20"
                   },
                   "typeName": {
@@ -244,10 +244,10 @@
                     "id": 5,
                     "name": "IERC20",
                     "nodeType": "UserDefinedTypeName",
-                    "referencedDeclaration": 1847,
+                    "referencedDeclaration": 1881,
                     "src": "152:6:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_IERC20_$1847",
+                      "typeIdentifier": "t_contract$_IERC20_$1881",
                       "typeString": "contract IERC20"
                     }
                   },
@@ -360,7 +360,7 @@
         "id": 2,
         "nodeType": "ImportDirective",
         "scope": 21,
-        "sourceUnit": 2169,
+        "sourceUnit": 2203,
         "src": "25:63:0",
         "symbolAliases": [],
         "unitAlias": ""
@@ -375,10 +375,10 @@
               "id": 3,
               "name": "TokenTimelock",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 2168,
+              "referencedDeclaration": 2202,
               "src": "120:13:0",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_TokenTimelock_$2168",
+                "typeIdentifier": "t_contract$_TokenTimelock_$2202",
                 "typeString": "contract TokenTimelock"
               }
             },
@@ -388,7 +388,7 @@
           }
         ],
         "contractDependencies": [
-          2168
+          2202
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -396,7 +396,7 @@
         "id": 20,
         "linearizedBaseContracts": [
           20,
-          2168
+          2202
         ],
         "name": "JHRewardsTimeLock",
         "nodeType": "ContractDefinition",
@@ -424,7 +424,7 @@
                     "referencedDeclaration": 6,
                     "src": "245:5:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_IERC20_$1847",
+                      "typeIdentifier": "t_contract$_IERC20_$1881",
                       "typeString": "contract IERC20"
                     }
                   },
@@ -462,10 +462,10 @@
                   "name": "TokenTimelock",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 2168,
+                  "referencedDeclaration": 2202,
                   "src": "231:13:0",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_type$_t_contract$_TokenTimelock_$2168_$",
+                    "typeIdentifier": "t_type$_t_contract$_TokenTimelock_$2202_$",
                     "typeString": "type(contract TokenTimelock)"
                   }
                 },
@@ -492,7 +492,7 @@
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_contract$_IERC20_$1847",
+                    "typeIdentifier": "t_contract$_IERC20_$1881",
                     "typeString": "contract IERC20"
                   },
                   "typeName": {
@@ -500,10 +500,10 @@
                     "id": 5,
                     "name": "IERC20",
                     "nodeType": "UserDefinedTypeName",
-                    "referencedDeclaration": 1847,
+                    "referencedDeclaration": 1881,
                     "src": "152:6:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_IERC20_$1847",
+                      "typeIdentifier": "t_contract$_IERC20_$1881",
                       "typeString": "contract IERC20"
                     }
                   },
@@ -595,7 +595,7 @@
   },
   "networks": {},
   "schemaVersion": "3.3.1",
-  "updatedAt": "2020-10-30T18:40:06.872Z",
+  "updatedAt": "2020-11-02T10:54:02.090Z",
   "devdoc": {
     "methods": {}
   },

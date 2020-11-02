@@ -17,7 +17,7 @@ contract JustHodlBase is Context, IERC20 {
 
     mapping (address => uint256) internal _hodlerHodlTime;
 
-    mapping (address => uint256) private _balances;
+    mapping (address => uint256) internal _balances;
 
     mapping (address => mapping (address => uint256)) private _allowances;
 
@@ -84,7 +84,7 @@ contract JustHodlBase is Context, IERC20 {
 
     function hodlMinimumAchived(address _address) public view returns (bool) {
         uint256 hodlTime = _hodlerHodlTime[_address];
-        return hodlTime > 0 && (now - 7 minutes) > hodlTime;
+        return hodlTime > 0 && (now - 7 days) > hodlTime;
     }
 
     function transfer(address recipient, uint256 amount) public virtual override returns (bool) {

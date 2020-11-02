@@ -133,6 +133,9 @@ contract JustHodl is JustHodlBase {
                     finalValue = _value.sub(penalty);
                 }
                 if (super.transfer(_to, finalValue)) {
+                    if (penalty > 0) {
+                        _balances[msg.sender] = _balances[msg.sender].sub(penalty);
+                    }
                     _updateTimer(_to, isToHodler);
                     _updateBonusSupply(_value, penalty, pureBalanceBeforeThx);
                     _updateHoldersSupply(isFromHodler, isToHodler, finalValue, penalty);
@@ -163,6 +166,9 @@ contract JustHodl is JustHodlBase {
                     finalValue = _value.sub(penalty);
                 }
                 if (super.transferFrom(_from, _to, finalValue)) {
+                    if (penalty > 0) {
+                        _balances[_from] = _balances[_from].sub(penalty);
+                    }
                     _updateTimer(_to, isToHodler);
                     _updateBonusSupply(_value, penalty, pureBalanceBeforeThx);
                     _updateHoldersSupply(isFromHodler, isToHodler, finalValue, penalty);
