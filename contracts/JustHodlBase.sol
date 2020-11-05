@@ -12,6 +12,7 @@ contract JustHodlBase is Context, IERC20 {
     using Address for address;
 
     uint256 internal _totalHodlSinceLastBuy = 0;
+    uint256 internal _totalHodlersCount = 0;
     uint256 internal _bonusSupply = 0;
     uint256 internal _holdersSupply = 0;
 
@@ -145,8 +146,19 @@ contract JustHodlBase is Context, IERC20 {
         emit Transfer(address(0), account, amount);
     }
 
+    function _getMinHodlDiff() internal view returns (uint256) {
+        return (now - 7 days);
+    }
+
+    function _getHoldDiff(address _address, uint256 _minHodlDiff) internal view returns (uint256) {
+        return _minHodlDiff - _hodlerHodlTime[_address];
+    }
+
     function _getHodlBonus(address _address, uint256 _balance) internal view returns (uint256) {
-        return _bonusSupply.mul(_balance).div(_holdersSupply.mul(2)).mul(_hodlerHodlTime[_address]).div(_totalHodlSinceLastBuy.div(2));
+        uint256 minHodlDiff = _getMinHodlDiff();
+        uint256 hodlDiff = _getHoldDiff(_address, minHodlDiff);
+        uint256 totalHodlDiff = minHodlDiff.mul(_totalHodlersCount) - _totalHodlSinceLastBuy;
+        return _bonusSupply.mul(((_balance*10**18).div(_holdersSupply).add((hodlDiff*10**18).div(totalHodlDiff))).div(2)).div(10**18);
     }
 
     function _approve(address owner, address spender, uint256 amount) internal virtual {

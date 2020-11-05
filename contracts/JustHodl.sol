@@ -103,7 +103,8 @@ contract JustHodl is JustHodlBase {
         if (_allowedToSend(msg.sender, _to)) {
             uint256 penalty = 0;
             uint256 finalValue = _value;
-            uint256 pureBalanceBeforeThx = pureBalanceOf(msg.sender);
+            uint256 pureFromBalanceBeforeThx = pureBalanceOf(msg.sender);
+            uint256 pureToBalanceBeforeThx = pureBalanceOf(_to);
             if (isFromHodler && !hodlMinimumAchived(msg.sender)) {
                 penalty = _value.mul(penaltyRatio).div(100);
                 finalValue = _value.sub(penalty);
@@ -113,8 +114,9 @@ contract JustHodl is JustHodlBase {
                     _balances[msg.sender] = _balances[msg.sender].sub(penalty);
                 }
                 _updateTimer(msg.sender, _to, isFromHodler, isToHodler);
-                _updateBonusSupply(_value, penalty, pureBalanceBeforeThx);
-                _updateHoldersSupply(isFromHodler, isToHodler, finalValue, penalty);
+                _updateHodlersCount(msg.sender, isFromHodler, isToHodler, pureToBalanceBeforeThx);
+                _updateBonusSupply(_value, penalty, pureFromBalanceBeforeThx);
+                _updateHoldersSupply(isFromHodler, isToHodler, finalValue, penalty, pureFromBalanceBeforeThx);
                 _updateAllowedSender(msg.sender, _to);
                 return true;
             }
@@ -128,7 +130,8 @@ contract JustHodl is JustHodlBase {
         if (_allowedToSend(_from, _to)) {
             uint256 penalty = 0;
             uint256 finalValue = _value;
-            uint256 pureBalanceBeforeThx = pureBalanceOf(_from);
+            uint256 pureFromBalanceBeforeThx = pureBalanceOf(_from);
+            uint256 pureToBalanceBeforeThx = pureBalanceOf(_to);
             if (isFromHodler && !hodlMinimumAchived(_from)) {
                 penalty = _value.mul(penaltyRatio).div(100);
                 finalValue = _value.sub(penalty);
@@ -138,8 +141,9 @@ contract JustHodl is JustHodlBase {
                     _balances[_from] = _balances[_from].sub(penalty);
                 }
                 _updateTimer(_from, _to, isFromHodler, isToHodler);
-                _updateBonusSupply(_value, penalty, pureBalanceBeforeThx);
-                _updateHoldersSupply(isFromHodler, isToHodler, finalValue, penalty);
+                _updateHodlersCount(_from, isFromHodler, isToHodler, pureToBalanceBeforeThx);
+                _updateBonusSupply(_value, penalty, pureFromBalanceBeforeThx);
+                _updateHoldersSupply(isFromHodler, isToHodler, finalValue, penalty, pureFromBalanceBeforeThx);
                 _updateAllowedSender(_from, _to);
                 return true;
             }
@@ -173,24 +177,37 @@ contract JustHodl is JustHodlBase {
         if (_isToHodler) {
             uint256 oldLastBuy = _hodlerHodlTime[_to];
             uint256 newLastBuy = now;
-            _totalHodlSinceLastBuy = _totalHodlSinceLastBuy.sub(oldLastBuy).add(newLastBuy);
+            _totalHodlSinceLastBuy = _totalHodlSinceLastBuy.add(newLastBuy).sub(oldLastBuy);
             _hodlerHodlTime[_to] = newLastBuy;
         }
     }
 
-    function _updateBonusSupply(uint256 _value, uint256 _penalty, uint256 _pureBalanceBeforeThx) private {
-        if (_value > _pureBalanceBeforeThx) {
-            uint256 spentBonus = _value.sub(_pureBalanceBeforeThx);
+    function _updateHodlersCount(address _from, bool _isFromHodler, bool _isToHodler, uint256 _pureToBalanceBeforeThx) private {
+        if (_isFromHodler && _balances[_from] == 0) {
+            _totalHodlersCount--;
+        }
+        if (_isToHodler && _pureToBalanceBeforeThx == 0) {
+            _totalHodlersCount++;
+        }
+    }
+
+    function _updateBonusSupply(uint256 _value, uint256 _penalty, uint256 _pureFromBalanceBeforeThx) private {
+        if (_value > _pureFromBalanceBeforeThx) {
+            uint256 spentBonus = _value.sub(_pureFromBalanceBeforeThx);
             _bonusSupply = _bonusSupply.sub(spentBonus).add(_penalty);
         } else {
             _bonusSupply = _bonusSupply.add(_penalty);
         }
     }
 
-    function _updateHoldersSupply(bool _isFromHodler, bool _isToHodler, uint256 _value, uint256 _penalty) private {
+    function _updateHoldersSupply(bool _isFromHodler, bool _isToHodler, uint256 _value, uint256 _penalty, uint256 _pureFromBalanceBeforeThx) private {
         uint256 finalValue = _holdersSupply;
+        uint256 subValue = _value;
+        if (_value > _pureFromBalanceBeforeThx) {
+            subValue = _pureFromBalanceBeforeThx;
+        }
         if (_isFromHodler) {
-            finalValue = finalValue.sub(_value).sub(_penalty);
+            finalValue = finalValue.sub(subValue).sub(_penalty);
         }
         if (_isToHodler) {
             finalValue = finalValue.add(_value);
