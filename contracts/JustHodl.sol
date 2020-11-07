@@ -7,7 +7,7 @@ import "./JustHodlBase.sol";
     $$ |  $$ |
     $$ |__$$ |
     $$    $$ |     Just Hodl
-    $$$$$$$$ |     $JHO
+    $$$$$$$$ |     $JH
     $$ |  $$ |
     $$ |  $$ |
     $$ /  $$ /
@@ -36,7 +36,7 @@ contract JustHodl is JustHodlBase {
         _;
     }
 
-    constructor() public payable JustHodlBase("JustHodl", "JHO") {
+    constructor() public payable JustHodlBase("JustHodl", "JH") {
         owner = msg.sender;
         _mint(msg.sender, maxSupply);
     }
