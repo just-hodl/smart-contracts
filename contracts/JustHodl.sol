@@ -20,7 +20,7 @@ import "./JustHodlBase.sol";
 contract JustHodl is JustHodlBase {
     address private owner;
     uint256 private penaltyRatio = 10;
-    uint256 private maxSupply = 1000 * (10 ** 18);
+    uint256 private maxSupply = 2000 * (10 ** 18);
 
     struct Addr {
         address _address;

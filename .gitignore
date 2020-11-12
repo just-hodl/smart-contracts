@@ -5,3 +5,5 @@ contract/*Flat.sol
 contract/*Test.sol
 build/*Flat.json
 build/*Test.json
+other
+helpers
